@@ -52,7 +52,7 @@
                                                                     else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
                                                                 in builtins.listToAttrs ( builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ) ;
                                                         in visitor path value ;
-                                            in elem [ ] ;
+                                            in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
                                 {
@@ -94,7 +94,7 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
-                                                        ( check "easy" { string = value : value ; } { } { alpha = "a" ; } ( candidate : builtins.typeOf candidate ) false false )
+                                                        ( check "easy" { string = value : value ; } { } { alpha = "a" ; } ( candidate : 1 ) false false )
                                                     ] ;
                                     lib = lib ;
                                 } ;
