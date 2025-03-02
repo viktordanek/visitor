@@ -133,8 +133,8 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
-                                                        ( check "easy" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
-                                                        ( check "easy" { string = path : value : value ; } [ ] { alpha = "70c5852246c99b7c36cac790cf1627f3d89e6c6d55214c734e500292ab9007c013b0a2f04382f92791568f328f11fe4bb7bb99718be2b86ca3608148b3da9e06" ; } ( candidate : builtins.elemAt candidate 0 ) true "70c5852246c99b7c36cac790cf1627f3d89e6c6d55214c734e500292ab9007c013b0a2f04382f92791568f328f11fe4bb7bb99718be2b86ca3608148b3da9e06" )
+                                                        ( check "set" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
+                                                        # ( check "list" { string = path : value : value ; } [ ] { alpha = "70c5852246c99b7c36cac790cf1627f3d89e6c6d55214c734e500292ab9007c013b0a2f04382f92791568f328f11fe4bb7bb99718be2b86ca3608148b3da9e06" ; } ( candidate : builtins.elemAt candidate 0 ) true "70c5852246c99b7c36cac790cf1627f3d89e6c6d55214c734e500292ab9007c013b0a2f04382f92791568f328f11fe4bb7bb99718be2b86ca3608148b3da9e06" )
                                                     ] ;
                                     lib = lib ;
                                 } ;
