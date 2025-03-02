@@ -89,7 +89,7 @@
                                                                                 predicate = visitor : visitor.name == builtins.typeOf value ;
                                                                                 in builtins.filter predicate all-visitors ;
                                                                         in builtins.head filtered-visitors ;
-                                                                in builtins.trace "cc0faef5-3bf9-4b71-9768-93b3446c6ae7:  ${ visitor.name }" visitor.value ;
+                                                                in visitor.value ;
                                                         in visitor path value ;
                                             in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
