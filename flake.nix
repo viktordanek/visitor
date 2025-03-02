@@ -76,7 +76,7 @@
                                                                                                                         else if builtins.typeOf value == "null" then builtins.throw "The simple ${ name } visitor is not lambda, null (and the default simple visitor is not lambda) but ${ builtins.typeOf value }."
                                                                                                                         else builtins.throw "The simple ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
                                                                                                                 } ;
-                                                                                                        in builtins.mapAttrs mapper ( builtins.trace "1d32d2aa-47c0-4590-b72e-47c86fefe204:  ${ builtins.toString ( builtins.length ( builtins.attrNames ( identity simple ) ) ) } ${ builtins.concatStringsSep "," ( builtins.attrNames ( identity simple ) ) }" identity ( simple ) ) ;
+                                                                                                        in builtins.mapAttrs mapper ( identity ( simple ) ) ;
                                                                                                 in builtins.attrValues simple-visitors ;
                                                                                         set-visitor =
                                                                                             if builtins.typeOf set == "lambda" then
