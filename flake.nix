@@ -85,7 +85,7 @@
                                                                                                     value = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ;
                                                                                                 }
                                                                                             else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
-                                                                                        in builtins.concatLists [ ( builtins.trace "206e7104-0358-4cdd-b85a-1698eb30fc48: ${ builtins.toString ( builtins.length simple-visitors ) }" simple-visitors ) [ list-visitor set-visitor ] ] ;
+                                                                                        in builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ;
                                                                                 predicate = visitor : visitor.name == builtins.typeOf value ;
                                                                                 in builtins.filter predicate ( builtins.trace "431eec35-9011-4bb6-abd5-ef0bccc32433:  ${ ( builtins.toString ( builtins.length all-visitors ) ) }" all-visitors ) ;
                                                                         in builtins.head filtered-visitors ;
