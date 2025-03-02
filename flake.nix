@@ -16,14 +16,15 @@
                                     float ? null ,
                                     int ? null ,
                                     lambda ? null ,
+                                    null ? null ,
                                     path ? null ,
-                                    string , null
+                                    string ? null
                                 } @simple :
                                     {
                                         default ? path : value : "The definition at ${ builtins.concatStringsSep " / " ( builtins.map builtins.toJSON path ) } is invalid.  It is of type ${ builtins.typeOf value }.  It is ${ if builtins.type.any ( t : t == builtins.typeOf value ) [ "bool" "float" "int" "path" "string" ] then  builtins.toJSON value else "unstringable." }." ,
                                         list ? list : list ,
                                         set ? set : set
-                                    } @complex : default :
+                                    } @complex : default : value :
                                     let
                                         elem =
                                             path : value :
@@ -46,7 +47,7 @@
                                                             set-visitor = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatList [ path [ name ] ] ) value ) value ) ;
                                                             in builtins.listToAttrs ( builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ) ;
                                                     in visitor path value ;
-                                        in elem [ ] ;
+                                        in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
                                 {
@@ -58,11 +59,19 @@
                                                             let
                                                                 candidate = lib { } { } ;
                                                                 expected = { success = false ; value = false ; } ;
-                                                                observed = builtins.tryEval ( candidate { } ) ;
+                                                                observed = builtins.tryEval ( candidate [ ] ) ;
                                                                 in
-                                                                    ''
-                                                                        ${ pkgs.coreutils }/bin/touch $out
-                                                                    '' ;
+                                                                    if expected == observed then
+                                                                        ''
+                                                                            ${ pkgs.coreutils }/bin/touch $out
+                                                                        ''
+                                                                     else
+                                                                        ''
+                                                                            ${ pkgs.coreutils }/bin/touch $out &&
+                                                                                ${ pkgs.coreutils }/bin/echo EXPECTED:  ${ builtins.toJSON expected } &&
+                                                                                ${ pkgs.coreutils }/bin/echo OBSERVED:  ${ builtins.toJSON observed } &&
+                                                                                exit 64
+                                                                        '' ;
                                                         name = "visitor-checks" ;
                                                         src = ./. ;
                                                     } ;
@@ -77,7 +86,7 @@
                                                                             null = path : visitor : "null" ;
                                                                         } { } ;
                                                                 expected = { complex = { lambda = "lambda" ; null = "null" ; } ; } ;
-                                                                observed = builtins.tryEval ( candidate { complex = { lambda = x : x ; null = null ; } ; } ) ;
+                                                                observed = builtins.tryEval ( builtins.getAttr "complex" ( builtins.getAttr "lambda" ( candidate { complex = { bool = false ; lambda = x : x ; null = null ; } ; } ) ) ) ;
                                                                 in
                                                                     ''
                                                                         ${ pkgs.coreutils }/bin/touch $out
