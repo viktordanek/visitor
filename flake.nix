@@ -111,7 +111,7 @@
                                                                                     success = if builtins.typeOf expected-success == "bool" then expected-success else builtins.throw "The expected success of ${ name } should be a boolean."  ;
                                                                                     value = if builtins.any ( t : t == builtins.typeOf expected-value ) [ "bool" "float" "int" "null" "string" "path" ] then expected-value else builtins.throw "The expected value of ${ name } is not stringable but ${ builtins.typeOf expected-value }." ;
                                                                                 } ;
-                                                                            observed = builtins.tryEval ( lib simple complex visited ) ;
+                                                                            observed = builtins.tryEval ( observation ( lib simple complex visited ) ) ;
                                                                             in
                                                                                 if expected == observed then
                                                                                     ''
@@ -133,7 +133,7 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
-                                                        ( check "easy" { string = path : value : value ; } { } { alpha = "a" ; } ( candidate : candidate.alpha ) false false )
+                                                        ( check "easy" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
                                                     ] ;
                                     lib = lib ;
                                 } ;
