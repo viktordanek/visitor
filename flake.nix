@@ -87,7 +87,7 @@
                                                                                             else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
                                                                                         in builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ;
                                                                                 predicate = visitor : visitor.name == builtins.typeOf value ;
-                                                                                in builtins.filter predicate ( builtins.trace "431eec35-9011-4bb6-abd5-ef0bccc32433:  ${ ( builtins.toString ( builtins.length all-visitors ) ) }" all-visitors ) ;
+                                                                                in builtins.filter predicate all-visitors ;
                                                                         in builtins.head filtered-visitors ;
                                                                 in builtins.trace "cc0faef5-3bf9-4b71-9768-93b3446c6ae7:  ${ visitor.name }" visitor.value ;
                                                         in visitor path value ;
