@@ -50,21 +50,61 @@
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
                                 {
-                                    checks.defaults =
-                                        pkgs.stdenv.mkDerivation
-                                            {
-                                                installPhase =
-                                                    let
-                                                        candidate = lib { } { } ;
-                                                        expected = { success = false ; value = false ; } ;
-                                                        observed = builtins.tryEval ( candidate { } ) ;
-                                                        in
-                                                            ''
-                                                                ${ pkgs.coreutils }/bin/touch $out
-                                                            '' ;
-                                                name = "visitor-checks" ;
-                                                src = ./. ;
-                                            } ;
+                                    checks =
+                                        {
+                                            defaults = pkgs.stdenv.mkDerivation
+                                                    {
+                                                        installPhase =
+                                                            let
+                                                                candidate = lib { } { } ;
+                                                                expected = { success = false ; value = false ; } ;
+                                                                observed = builtins.tryEval ( candidate { } ) ;
+                                                                in
+                                                                    ''
+                                                                        ${ pkgs.coreutils }/bin/touch $out
+                                                                    '' ;
+                                                        name = "visitor-checks" ;
+                                                        src = ./. ;
+                                                    } ;
+                                            lazy = pkgs.stdenv.mkDerivation
+                                                    {
+                                                        installPhase =
+                                                            let
+                                                                candidate =
+                                                                    lib
+                                                                        {
+                                                                            lambda = path : visitor : "lambda" ;
+                                                                            null = path : visitor : "null" ;
+                                                                        } { } ;
+                                                                expected = { complex = { lambda = "lambda" ; null = "null" ; } ; } ;
+                                                                observed = builtins.tryEval ( candidate { complex = { lambda = x : x ; null = null ; } ; } ) ;
+                                                                in
+                                                                    ''
+                                                                        ${ pkgs.coreutils }/bin/touch $out
+                                                                    '' ;
+                                                        name = "visitor-checks" ;
+                                                        src = ./. ;
+                                                    } ;
+                                            standard = pkgs.stdenv.mkDerivation
+                                                    {
+                                                        installPhase =
+                                                            let
+                                                                candidate =
+                                                                    lib
+                                                                        {
+                                                                            lambda = path : visitor : "lambda" ;
+                                                                            null = path : visitor : "null" ;
+                                                                        } { } ;
+                                                                expected = { complex = { lambda = "lambda" ; null = "null" ; } ; } ;
+                                                                observed = builtins.tryEval ( candidate { complex = { lambda = x : x ; null = null ; } ; } ) ;
+                                                                in
+                                                                    ''
+                                                                        ${ pkgs.coreutils }/bin/touch $out
+                                                                    '' ;
+                                                        name = "visitor-checks" ;
+                                                        src = ./. ;
+                                                    } ;
+                                        } ;
                                     lib = lib ;
                                 } ;
                 in flake-utils.lib.eachDefaultSystem fun ;
