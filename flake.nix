@@ -94,7 +94,7 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
-                                                        ( check "easy" { string = value : value ; } { } { alpha = "a" ; } ( candidate : 1 ) false false )
+                                                        ( check "easy" { string = value : value ; } { } { alpha = "a" ; } ( candidate : candidate.alpha ) false false )
                                                     ] ;
                                     lib = lib ;
                                 } ;
