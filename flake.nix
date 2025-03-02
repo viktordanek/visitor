@@ -37,13 +37,13 @@
                                                                             let
                                                                                 all-visitors =
                                                                                     let
-                                                                                        list-visitor = builtins.trace "bec736f2-4b99-4fc1-a471-fc4472983fa2" (
+                                                                                        list-visitor =
                                                                                             if builtins.typeOf list == "lambda" then
                                                                                                 {
                                                                                                     name = "list" ;
-                                                                                                    value = path : value : list ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) value ) ( builtins.length value ) ) ;
+                                                                                                    value = path : value : list ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) ( builtins.elemAt value index ) ) ( builtins.length value ) ) ;
                                                                                                 }
-                                                                                            else builtins.throw "The complex list aggregator is not lambda but ${ builtins.typeOf list }." ) ;
+                                                                                            else builtins.throw "The complex list aggregator is not lambda but ${ builtins.typeOf list }." ;
                                                                                         simple-visitors =
                                                                                             let
                                                                                                 simple-visitors =
@@ -135,7 +135,7 @@
                                                     [
                                                         # ( check "set" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
                                                         # ( check "string" { string = path : value : value ; } { } "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" ( candidate : candidate ) true "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" )
-                                                        ( check "list" { string = path : value : value ; } { } [ "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" ] ( candidate : builtins.elemAt candidate 0 ) true "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" )
+                                                        ( check "list" { string = path : value : value ; } { } [ "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" ] ( candidate : builtins.elemAt candidate 0 ) true "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" )
                                                     ] ;
                                     lib = lib ;
                                 } ;
