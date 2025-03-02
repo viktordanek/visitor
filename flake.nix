@@ -43,25 +43,26 @@
                                                                                     else builtins.throw "The ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
                                                                             } ;
                                                                     in builtins.mapAttrs mapper simple ;
-                                                            set = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatList [ path [ name ] ] ) value ) value ) ;
+                                                            set-visitor = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatList [ path [ name ] ] ) value ) value ) ;
                                                             in builtins.listToAttrs ( builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ) ;
                                                     in visitor path value ;
                                         in elem [ ] ;
+                            pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
                                 {
-                                    checks.lib =
+                                    checks.defaults =
                                         pkgs.stdenv.mkDerivation
                                             {
                                                 installPhase =
                                                     let
                                                         candidate = lib { } { } ;
-                                                        expected = { success = false ; value = false ; }
+                                                        expected = { success = false ; value = false ; } ;
                                                         observed = builtins.tryEval ( candidate { } ) ;
                                                         in
                                                             ''
                                                                 ${ pkgs.coreutils }/bin/touch $out
                                                             '' ;
-                                                name = "visitor-checks-lib" ;
+                                                name = "visitor-checks" ;
                                                 src = ./. ;
                                             } ;
                                     lib = lib ;
