@@ -31,55 +31,65 @@
                                                     let
                                                         visitor =
                                                             let
-                                                                filtered-visitors =
+                                                                visitor =
                                                                     let
-                                                                        all-visitors =
+                                                                        filtered-visitors =
                                                                             let
-                                                                                list-visitor =
-                                                                                    if builtins.typeOf list == "lambda" then path : value : list ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) value ) ( builtins.length value ) )
-                                                                                    else builtins.throw "The complex list aggregator is not lambda but ${ builtins.typeOf list }." ;
-                                                                                simple-visitors =
+                                                                                all-visitors =
                                                                                     let
+                                                                                        list-visitor =
+                                                                                            if builtins.typeOf list == "lambda" then
+                                                                                                {
+                                                                                                    name = "list" ;
+                                                                                                    value = path : value : list ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) value ) ( builtins.length value ) ) ;
+                                                                                                }
+                                                                                            else builtins.throw "The complex list aggregator is not lambda but ${ builtins.typeOf list }." ;
                                                                                         simple-visitors =
                                                                                             let
-                                                                                                identity =
-                                                                                                    {
-                                                                                                        bool ? null ,
-                                                                                                        float ? null ,
-                                                                                                        int ? null ,
-                                                                                                        lambda ? null ,
-                                                                                                        null ? null ,
-                                                                                                        path ? null ,
-                                                                                                        string ? null
-                                                                                                    } :
-                                                                                                        {
-                                                                                                            bool = bool ;
-                                                                                                            float = float ;
-                                                                                                            int = int ;
-                                                                                                            lambda = lambda ;
-                                                                                                            null = null ;
-                                                                                                            string = string ;
-                                                                                                        } ;
-                                                                                                mapper =
-                                                                                                    name : value :
-                                                                                                        {
-                                                                                                            name = name ;
-                                                                                                            value =
-                                                                                                                if builtins.typeOf value == "lambda" then value
-                                                                                                                else if builtins.typeOf value == "null" && builtins.typeOf default == "lambda" then default
-                                                                                                                else if builtins.typeOf value == "null" then builtins.throw "The simple ${ name } visitor is not lambda, null (and the default simple visitor is not lambda) but ${ builtins.typeOf value }."
-                                                                                                                else builtins.throw "The simple ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
-                                                                                                        } ;
-                                                                                                in builtins.mapAttrs mapper ( builtins.trace "1d32d2aa-47c0-4590-b72e-47c86fefe204:  ${ builtins.toString ( builtins.length ( builtins.attrNames ( identity simple ) ) ) } ${ builtins.concatStringsSep "," ( builtins.attrNames ( identity simple ) ) }" identity ( simple ) ) ;
-                                                                                        in builtins.attrValues simple-visitors ;
-                                                                                set-visitor =
-                                                                                    if builtins.typeOf set == "lambda" then path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatList [ path [ name ] ] ) value ) value )
-                                                                                    else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
-                                                                                in builtins.concatLists [ ( builtins.trace "206e7104-0358-4cdd-b85a-1698eb30fc48: ${ builtins.toString ( builtins.length simple-visitors ) }" simple-visitors ) [ list-visitor set-visitor ] ] ;
-                                                                        predicate = v : builtins.typeOf value == v ;
-                                                                        #
-                                                                        in builtins.filter predicate ( builtins.trace "431eec35-9011-4bb6-abd5-ef0bccc32433:  ${ ( builtins.toString ( builtins.length all-visitors ) ) }" all-visitors ) ;
-                                                                in builtins.head filtered-visitors ;
+                                                                                                simple-visitors =
+                                                                                                    let
+                                                                                                        identity =
+                                                                                                            {
+                                                                                                                bool ? null ,
+                                                                                                                float ? null ,
+                                                                                                                int ? null ,
+                                                                                                                lambda ? null ,
+                                                                                                                null ? null ,
+                                                                                                                path ? null ,
+                                                                                                                string ? null
+                                                                                                            } :
+                                                                                                                {
+                                                                                                                    bool = bool ;
+                                                                                                                    float = float ;
+                                                                                                                    int = int ;
+                                                                                                                    lambda = lambda ;
+                                                                                                                    null = null ;
+                                                                                                                    string = string ;
+                                                                                                                } ;
+                                                                                                        mapper =
+                                                                                                            name : value :
+                                                                                                                {
+                                                                                                                    name = name ;
+                                                                                                                    value =
+                                                                                                                        if builtins.typeOf value == "lambda" then value
+                                                                                                                        else if builtins.typeOf value == "null" && builtins.typeOf default == "lambda" then default
+                                                                                                                        else if builtins.typeOf value == "null" then builtins.throw "The simple ${ name } visitor is not lambda, null (and the default simple visitor is not lambda) but ${ builtins.typeOf value }."
+                                                                                                                        else builtins.throw "The simple ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
+                                                                                                                } ;
+                                                                                                        in builtins.mapAttrs mapper ( builtins.trace "1d32d2aa-47c0-4590-b72e-47c86fefe204:  ${ builtins.toString ( builtins.length ( builtins.attrNames ( identity simple ) ) ) } ${ builtins.concatStringsSep "," ( builtins.attrNames ( identity simple ) ) }" identity ( simple ) ) ;
+                                                                                                in builtins.attrValues simple-visitors ;
+                                                                                        set-visitor =
+                                                                                            if builtins.typeOf set == "lambda" then
+                                                                                                {
+                                                                                                    name = "set" ;
+                                                                                                    value = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ;
+                                                                                                }
+                                                                                            else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
+                                                                                        in builtins.concatLists [ ( builtins.trace "206e7104-0358-4cdd-b85a-1698eb30fc48: ${ builtins.toString ( builtins.length simple-visitors ) }" simple-visitors ) [ list-visitor set-visitor ] ] ;
+                                                                                predicate = visitor : visitor.name == builtins.typeOf value ;
+                                                                                in builtins.filter predicate ( builtins.trace "431eec35-9011-4bb6-abd5-ef0bccc32433:  ${ ( builtins.toString ( builtins.length all-visitors ) ) }" all-visitors ) ;
+                                                                        in builtins.head filtered-visitors ;
+                                                                in builtins.trace "cc0faef5-3bf9-4b71-9768-93b3446c6ae7:  ${ visitor.name }" visitor.value ;
                                                         in visitor path value ;
                                             in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
@@ -123,7 +133,7 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
-                                                        ( check "easy" { string = value : value ; } { } { alpha = "a" ; } ( candidate : candidate.alpha ) false false )
+                                                        ( check "easy" { string = path : value : value ; } { } { alpha = "a" ; } ( candidate : candidate.alpha ) false false )
                                                     ] ;
                                     lib = lib ;
                                 } ;
