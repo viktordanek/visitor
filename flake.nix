@@ -72,7 +72,7 @@
                                                                                                                     name = name ;
                                                                                                                     value =
                                                                                                                         if builtins.typeOf value == "lambda" then value
-                                                                                                                        else if builtins.typeOf value == "null" && builtins.typeOf default == "lambda" then builtins.trace "995ab945-31ce-44fc-ad9d-a42bf8dcca77" default
+                                                                                                                        else if builtins.typeOf value == "null" && builtins.typeOf default == "lambda" then default
                                                                                                                         else if builtins.typeOf value == "null" then builtins.throw "The simple ${ name } visitor is not lambda, null (and the default simple visitor is not lambda) but ${ builtins.typeOf value }."
                                                                                                                         else builtins.throw "The simple ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
                                                                                                                 } ;
