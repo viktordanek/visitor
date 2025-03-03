@@ -161,6 +161,46 @@
                                                     [
                                                         (
                                                             check
+                                                                "complex-list"
+                                                                {
+                                                                    string =
+                                                                        path : value :
+                                                                            [
+                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
+                                                                            ] ;
+                                                                }
+                                                                {
+                                                                    list =
+                                                                        path : list :
+                                                                            builtins.concatLists
+                                                                                [
+                                                                                    [
+                                                                                        "${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
+                                                                                    ]
+                                                                                    ( builtins.concatLists list )
+                                                                                ] ;
+                                                                }
+                                                                [
+                                                                    [
+                                                                        "982781a4ff12556bcc6a8db985ccbaccbb5d9147c93c18e3f9609a42d3e4f82f7bf7fa1bebdd25058ecdf6c3c11dd26a14f2e03c523cc80165f6b2d4aa381947"
+                                                                    ]
+                                                                ]
+                                                                (
+                                                                    candidate :
+                                                                        ''
+                                                                            ${ builtins.concatStringsSep " &&\n    " candidate }
+                                                                        ''
+                                                                )
+                                                                true
+                                                                ''
+                                                                    ${ pkgs.coreutils }/bin/mkdir ROOT &&
+                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10" &&
+                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10"/"f20dd5a056deb7ed89ac758d516628f84bb8bc0c13b261da5a459f9ecffd94b07de91af2e5aff0d3a4559cb7fd13dd216c72caf52b7f8f2b1b3973895073d0ca" &&
+                                                                        ${ pkgs.coreutils }/bin/echo e0c8f7913af793255957e4ae8c7e4c10b75466e4fa0949bdd837431c3ac16f16ebd2a6682afe0eed701ee3417668aaebea74a4145da31dfa5c6df8eb696b7021 > ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10"/"f20dd5a056deb7ed89ac758d516628f84bb8bc0c13b261da5a459f9ecffd94b07de91af2e5aff0d3a4559cb7fd13dd216c72caf52b7f8f2b1b3973895073d0ca"/"string"
+                                                                ''
+                                                        )
+                                                        (
+                                                            check
                                                                 "complex-set"
                                                                 {
                                                                     string =
