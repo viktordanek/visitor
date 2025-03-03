@@ -137,21 +137,38 @@
                                                             check
                                                                 "complex-set"
                                                                 {
-                                                                    string = path : value : value ;
+                                                                    string = path : value : [ "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }" ] ;
                                                                 }
-                                                                { }
+                                                                {
+                                                                    set =
+                                                                        path : set :
+                                                                            builtins.concatLists
+                                                                                [
+                                                                                    [
+                                                                                        ''
+                                                                                            ${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }"
+                                                                                        ''
+                                                                                    ]
+                                                                                    ( builtins.concatLists ( builtins.attrValues set ) )
+                                                                                ] ;
+                                                                }
                                                                 {
                                                                     alpha =
                                                                         {
                                                                             beta =
                                                                                 {
-                                                                                    string = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ;
+                                                                                    string = "e0c8f7913af793255957e4ae8c7e4c10b75466e4fa0949bdd837431c3ac16f16ebd2a6682afe0eed701ee3417668aaebea74a4145da31dfa5c6df8eb696b7021" ;
                                                                                 } ;
                                                                         } ;
                                                                 }
-                                                                ( candidate : candidate.alpha )
+                                                                ( candidate : builtins.concatStringsSep " &&\n\t" candidate )
                                                                 true
-                                                                "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2"
+                                                                ''
+                                                                    ${ pkgs.coreutils }/bin/mkdir ROOT &&
+                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"alpha" &&
+                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"alpha"/"beta" &&
+                                                                        ${ pkgs.coreutils }/bin/echo e0c8f7913af793255957e4ae8c7e4c10b75466e4fa0949bdd837431c3ac16f16ebd2a6682afe0eed701ee3417668aaebea74a4145da31dfa5c6df8eb696b7021 > ROOT/"alpha"/"beta"/"string"
+                                                                ''
                                                         )
                                                         ( check "no-visitor" { string = path : value : value ; } { } null ( candidate : candidate ) false false )
                                                         ( check "set" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
