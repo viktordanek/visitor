@@ -57,7 +57,7 @@
                                                                                                                 null ? builtins.null ,
                                                                                                                 path ? builtins.null ,
                                                                                                                 string ? builtins.null
-                                                                                                            } @p :
+                                                                                                            } :
                                                                                                                 {
                                                                                                                     bool = bool ;
                                                                                                                     float = float ;
@@ -67,7 +67,7 @@
                                                                                                                     string = string ;
                                                                                                                 } ;
                                                                                                         mapper =
-                                                                                                            name : value : builtins.trace "5da96c4e-e5c8-4009-805d-882b19433c44:  ${ name } ${ builtins.typeOf default }" (
+                                                                                                            name : value :
                                                                                                                 {
                                                                                                                     name = name ;
                                                                                                                     value =
@@ -75,7 +75,7 @@
                                                                                                                         else if builtins.typeOf value == "null" && builtins.typeOf default == "lambda" then builtins.trace "995ab945-31ce-44fc-ad9d-a42bf8dcca77" default
                                                                                                                         else if builtins.typeOf value == "null" then builtins.throw "The simple ${ name } visitor is not lambda, null (and the default simple visitor is not lambda) but ${ builtins.typeOf value }."
                                                                                                                         else builtins.throw "The simple ${ name } visitor is not lambda, null but ${ builtins.typeOf value }." ;
-                                                                                                                } ) ;
+                                                                                                                } ;
                                                                                                         in builtins.mapAttrs mapper ( identity ( simple ) ) ;
                                                                                                 in builtins.attrValues simple-visitors ;
                                                                                         set-visitor =
@@ -91,7 +91,7 @@
                                                                         in builtins.head filtered-visitors ;
                                                                 in visitor.value ;
                                                         in visitor path value ;
-                                            in builtins.trace "496f8947-31af-46d2-9e4a-29e40cb2f602 ${ builtins.typeOf value }" ( elem [ ] value ) ;
+                                            in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
                                 {
