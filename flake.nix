@@ -145,9 +145,7 @@
                                                                             builtins.concatLists
                                                                                 [
                                                                                     [
-                                                                                        ''
-                                                                                            ${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }"
-                                                                                        ''
+                                                                                        "${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }"
                                                                                     ]
                                                                                     ( builtins.concatLists ( builtins.attrValues set ) )
                                                                                 ] ;
