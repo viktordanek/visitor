@@ -113,19 +113,14 @@
                                                                                 } ;
                                                                             observed = builtins.tryEval ( observation ( lib simple complex  visited ) ) ;
                                                                             in
-                                                                                if expected == observed then
-                                                                                    ''
-                                                                                        ${ pkgs.coreutils }/bin/touch $out
-                                                                                    ''
-                                                                                else
-                                                                                    ''
-                                                                                        ${ pkgs.coreutils }/bin/touch $out &&
-                                                                                            ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
-                                                                                            ${ pkgs.coreutils }/bin/echo EXPECTED did not equal OBSERVED >&2 &&
-                                                                                            ${ pkgs.coreutils }/bin/echo EXPECTED:  ${ builtins.toJSON expected } >&2 &&
-                                                                                            ${ pkgs.coreutils }/bin/echo OBSERVED:  ${ builtins.toJSON observed } >&2 &&
-                                                                                            exit 64
-                                                                                    '' ;
+                                                                                ''
+                                                                                    ${ pkgs.coreutils }/bin/mkdir $out &&
+                                                                                        ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED did not equal OBSERVED >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED:  ${ builtins.toJSON expected } >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo OBSERVED:  ${ builtins.toJSON observed } >&2 &&
+                                                                                        exit 64
+                                                                                '' ;
                                                                     name = "visitor-check-${ name }" ;
                                                                     src = ./. ;
                                                                 } ;
