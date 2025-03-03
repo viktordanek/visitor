@@ -115,21 +115,19 @@
                                                                             in
                                                                                 ''
                                                                                     ${ pkgs.coreutils }/bin/mkdir $out &&
-                                                                                    ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON expected } > $out/expected.json &&
-                                                                                    ${ pkgs.yq }/bin/yq --yaml-output "." $out/expected.json > $out/expected.yaml &&
-                                                                                    ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON observed } > $out/observed.json &&
-                                                                                    ${ pkgs.yq }/bin/yq --yaml-output "." $out/observed.json > $out/observed.yaml &&
+                                                                                    ${ pkgs.coreutils }/bin/echo 'BEFORE:${ builtins.toJSON expected }:AFTER' > $out/expected.json &&
+                                                                                    ${ pkgs.coreutils }/bin/echo 'BEFORE:${ builtins.toJSON observed }:AFTER' > $out/observed.json &&
                                                                                     ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
                                                                                     ${ pkgs.coreutils }/bin/echo EXPECTED: >&2 &&
-                                                                                    ${ pkgs.coreutils }/bin/cat $out/expected.yaml >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/cat $out/expected.json >&2 &&
                                                                                     ${ pkgs.coreutils }/bin/echo >&2 &&
                                                                                     ${ pkgs.coreutils }/bin/echo OBSERVED: >&2 &&
-                                                                                    ${ pkgs.coreutils }/bin/cat $out/observed.yaml >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/cat $out/observed.json >&2 &&
                                                                                     ${ pkgs.coreutils }/bin/echo >&2 &&
                                                                                     ${ pkgs.coreutils }/bin/echo DIFFERENCE >&2 &&
 
                                                                                     # Find first difference using cmp
-                                                                                    DIFF_INFO=$(${ pkgs.diffutils }/bin/cmp --verbose $out/expected.yaml $out/observed.yaml || true) &&
+                                                                                    DIFF_INFO=$(${ pkgs.diffutils }/bin/cmp --verbose $out/expected.json $out/observed.json || true) &&
 
                                                                                     if [ -z "${ builtins.concatStringsSep "" [ "$" "{" "DIFF_INFO" "}" ] }" ]
                                                                                     then
@@ -146,7 +144,7 @@
                                                                                         # Print up to but not including the differing character
                                                                                         ${ pkgs.coreutils }/bin/echo "FIRST DIFFERENCE AT BYTE: ${ builtins.concatStringsSep "" [ "$" "{" "BYTE_POS" "}" ] }" >&2
                                                                                         ${ pkgs.coreutils }/bin/echo "EXPECTED (AND OBSERVED) UP TO BUT NOT INCLUDING THE FIRST DIFFERENCE:" >&2
-                                                                                        ${ pkgs.coreutils }/bin/head --bytes $((BYTE_POS)) $out/expected.yaml >&2
+                                                                                        ${ pkgs.coreutils }/bin/head --bytes $((BYTE_POS)) $out/expected.json >&2
                                                                                         exit 64
                                                                                     fi
 
@@ -194,9 +192,8 @@
                                                                 true
                                                                 ''
                                                                     ${ pkgs.coreutils }/bin/mkdir ROOT &&
-                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10" &&
-                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10"/"f20dd5a056deb7ed89ac758d516628f84bb8bc0c13b261da5a459f9ecffd94b07de91af2e5aff0d3a4559cb7fd13dd216c72caf52b7f8f2b1b3973895073d0ca" &&
-                                                                        ${ pkgs.coreutils }/bin/echo e0c8f7913af793255957e4ae8c7e4c10b75466e4fa0949bdd837431c3ac16f16ebd2a6682afe0eed701ee3417668aaebea74a4145da31dfa5c6df8eb696b7021 > ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10"/"f20dd5a056deb7ed89ac758d516628f84bb8bc0c13b261da5a459f9ecffd94b07de91af2e5aff0d3a4559cb7fd13dd216c72caf52b7f8f2b1b3973895073d0ca"/"string"
+                                                                        ${ pkgs.coreutils }/bin/mkdir ROOT/0 &&
+                                                                        ${ pkgs.coreutils }/bin/echo 982781a4ff12556bcc6a8db985ccbaccbb5d9147c93c18e3f9609a42d3e4f82f7bf7fa1bebdd25058ecdf6c3c11dd26a14f2e03c523cc80165f6b2d4aa381947 > ROOT/0/0
                                                                 ''
                                                         )
                                                         (
