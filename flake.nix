@@ -133,6 +133,20 @@
                                             in
                                                 builtins.listToAttrs
                                                     [
+                                                        (
+                                                            check
+                                                                "complex-set"
+                                                                {
+                                                                    string = path : value : value ;
+                                                                }
+                                                                { }
+                                                                {
+                                                                    alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ;
+                                                                }
+                                                                ( candidate : candidate.alpha )
+                                                                true
+                                                                "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2"
+                                                        )
                                                         ( check "no-visitor" { string = path : value : value ; } { } null ( candidate : candidate ) false false )
                                                         ( check "set" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
                                                         ( check "string" { string = path : value : value ; } { } "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" ( candidate : candidate ) true "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" )
