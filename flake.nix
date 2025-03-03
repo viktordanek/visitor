@@ -141,7 +141,13 @@
                                                                 }
                                                                 { }
                                                                 {
-                                                                    alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ;
+                                                                    alpha =
+                                                                        {
+                                                                            beta =
+                                                                                {
+                                                                                    string = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ;
+                                                                                } ;
+                                                                        } ;
                                                                 }
                                                                 ( candidate : candidate.alpha )
                                                                 true
