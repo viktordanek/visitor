@@ -111,7 +111,7 @@
                                                                                     success = if builtins.typeOf expected-success == "bool" then expected-success else builtins.throw "The expected success of ${ name } should be a boolean."  ;
                                                                                     value = if builtins.any ( t : t == builtins.typeOf expected-value ) [ "bool" "float" "int" "null" "string" "path" ] then expected-value else builtins.throw "The expected value of ${ name } is not stringable but ${ builtins.typeOf expected-value }." ;
                                                                                 } ;
-                                                                            observed = builtins.tryEval ( observation ( ( builtins.trace "d963b61b-8bbe-4e78-8b50-164d08768f79" lib ) simple complex ( builtins.trace "608947e3-3140-4571-8999-a8f6bba1650d" visited ) ) ) ;
+                                                                            observed = builtins.tryEval ( observation ( lib simple complex ( builtins.trace "608947e3-3140-4571-8999-a8f6bba1650d" visited ) ) ) ;
                                                                             in
                                                                                 if expected == observed then
                                                                                     ''
