@@ -115,11 +115,27 @@
                                                                             in
                                                                                 ''
                                                                                     ${ pkgs.coreutils }/bin/mkdir $out &&
+                                                                                        ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON expected } > $out/expected.json &&
+                                                                                        ${ pkgs.yq }/bin/yq --yaml-output "." $out/expected.json > $out/expected.yaml &&
+                                                                                        ${ pkgs.coreutils }/bin/fold --width 1 $out/expected.yaml > $out/expected.1 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON observed } > $out/observed.json &&
+                                                                                        ${ pkgs.yq }/bin/yq --yaml-output "." $out/observed.json > $out/observed.yaml &&
+                                                                                        ${ pkgs.coreutils }/bin/fold --width 1 $out/observed.yaml > $out/observed.1 &&
                                                                                         ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED did not equal OBSERVED >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED:  ${ builtins.toJSON expected } >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo OBSERVED:  ${ builtins.toJSON observed } >&2 &&
-                                                                                        exit 64
+                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED: >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/cat $out/expected.yaml >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo OBSERVED: >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/cat $out/observed.yaml >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo >&2 &&
+                                                                                        ${ pkgs.coreutils }/bin/echo DIFFERENCE >&2 &&
+                                                                                        if ${ pkgs.diffutils }/bin/diff --side-by-side $out/expected.1 $out/observed.1
+                                                                                        then
+                                                                                            exit 0
+                                                                                        else
+                                                                                            exit 64
+                                                                                        fi
+
                                                                                 '' ;
                                                                     name = "visitor-check-${ name }" ;
                                                                     src = ./. ;
