@@ -22,8 +22,8 @@
                                 } @simple :
                                     {
                                         default ? path : value : builtins.throw "The definition at ${ builtins.concatStringsSep " / " ( builtins.concatLists [ [ "*ROOT*" ] ( builtins.map builtins.toJSON path ) ] ) } is invalid.  It is of type ${ builtins.typeOf value }.  It is ${ if builtins.any ( t : t == builtins.typeOf value ) [ "bool" "float" "int" "null" "path" "string" ] then  builtins.toJSON value else "unstringable." }." ,
-                                        list ? list : list ,
-                                        set ? set : set
+                                        list ? path : list : list ,
+                                        set ? path : set : set
                                     } : value :
                                         let
                                             elem =
@@ -41,9 +41,16 @@
                                                                                             if builtins.typeOf list == "lambda" then
                                                                                                 {
                                                                                                     name = "list" ;
-                                                                                                    value = path : value : list ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) ( builtins.elemAt value index ) ) ( builtins.length value ) ) ;
+                                                                                                    value = path : value : list path ( builtins.genList ( index : elem ( builtins.concatLists [ path [ index ] ] ) ( builtins.elemAt value index ) ) ( builtins.length value ) ) ;
                                                                                                 }
                                                                                             else builtins.throw "The complex list aggregator is not lambda but ${ builtins.typeOf list }." ;
+                                                                                        set-visitor =
+                                                                                            if builtins.typeOf set == "lambda" then
+                                                                                                {
+                                                                                                    name = "set" ;
+                                                                                                    value = path : value : set path ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ;
+                                                                                                }
+                                                                                            else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
                                                                                         simple-visitors =
                                                                                             let
                                                                                                 simple-visitors =
@@ -78,13 +85,6 @@
                                                                                                                 } ;
                                                                                                         in builtins.mapAttrs mapper ( identity ( simple ) ) ;
                                                                                                 in builtins.attrValues simple-visitors ;
-                                                                                        set-visitor =
-                                                                                            if builtins.typeOf set == "lambda" then
-                                                                                                {
-                                                                                                    name = "set" ;
-                                                                                                    value = path : value : set ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ;
-                                                                                                }
-                                                                                            else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
                                                                                         in builtins.concatLists [ simple-visitors [ list-visitor set-visitor ] ] ;
                                                                                 predicate = visitor : visitor.name == builtins.typeOf value ;
                                                                                 in builtins.filter predicate all-visitors ;
