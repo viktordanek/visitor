@@ -115,26 +115,45 @@
                                                                             in
                                                                                 ''
                                                                                     ${ pkgs.coreutils }/bin/mkdir $out &&
-                                                                                        ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON expected } > $out/expected.json &&
-                                                                                        ${ pkgs.yq }/bin/yq --yaml-output "." $out/expected.json > $out/expected.yaml &&
-                                                                                        ${ pkgs.coreutils }/bin/fold --width 1 $out/expected.yaml > $out/expected.1 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON observed } > $out/observed.json &&
-                                                                                        ${ pkgs.yq }/bin/yq --yaml-output "." $out/observed.json > $out/observed.yaml &&
-                                                                                        ${ pkgs.coreutils }/bin/fold --width 1 $out/observed.yaml > $out/observed.1 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo EXPECTED: >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/cat $out/expected.yaml >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo OBSERVED: >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/cat $out/observed.yaml >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo >&2 &&
-                                                                                        ${ pkgs.coreutils }/bin/echo DIFFERENCE >&2 &&
-                                                                                        if ${ pkgs.diffutils }/bin/diff --side-by-side $out/expected.1 $out/observed.1
-                                                                                        then
-                                                                                            exit 0
-                                                                                        else
-                                                                                            exit 64
+                                                                                    ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON expected } > $out/expected.json &&
+                                                                                    ${ pkgs.yq }/bin/yq --yaml-output "." $out/expected.json > $out/expected.yaml &&
+                                                                                    ${ pkgs.coreutils }/bin/echo ${ builtins.toJSON observed } > $out/observed.json &&
+                                                                                    ${ pkgs.yq }/bin/yq --yaml-output "." $out/observed.json > $out/observed.yaml &&
+                                                                                    ${ pkgs.coreutils }/bin/echo CHECK:  ${ name } >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/echo EXPECTED: >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/cat $out/expected.yaml >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/echo >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/echo OBSERVED: >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/cat $out/observed.yaml >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/echo >&2 &&
+                                                                                    ${ pkgs.coreutils }/bin/echo DIFFERENCE >&2 &&
+
+                                                                                    # Find first difference using cmp
+                                                                                    DIFF_INFO=$(${ pkgs.diffutils }/bin/cmp --verbose $out/expected.yaml $out/observed.yaml || true) &&
+
+                                                                                    if [ -z "${ builtins.concatStringsSep "" [ "$" "{" "DIFF_INFO" "}" ] }" ]
+                                                                                    then
+                                                                                        exit 0
+                                                                                    else
+                                                                                        # Extract byte position of the difference
+                                                                                        BYTE_POS=$( echo ${ builtins.concatStringsSep "" [ "$" "{" "DIFF_INFO" "}" ] } | ${ pkgs.gawk }/bin/awk '{print $1}' )
+
+                                                                                        # Handle EOF message by ensuring the byte position is captured correctly
+                                                                                        if [[ "${ builtins.concatStringsSep "" [ "$" "{" "DIFF_INFO" "}" ] }" == *"EOF"* ]]; then
+                                                                                            BYTE_POS=$((BYTE_POS - 1))  # Adjust byte position to handle EOF case
                                                                                         fi
+
+                                                                                        # Print up to but not including the differing character
+                                                                                        ${ pkgs.coreutils }/bin/echo "FIRST DIFFERENCE AT BYTE: ${ builtins.concatStringsSep "" [ "$" "{" "BYTE_POS" "}" ] }" >&2
+                                                                                        ${ pkgs.coreutils }/bin/echo "EXPECTED (UP TO DIFF):" >&2
+                                                                                        ${ pkgs.coreutils }/bin/head --bytes $((BYTE_POS)) $out/expected.yaml >&2
+                                                                                        ${ pkgs.coreutils }/bin/echo >&2
+                                                                                        ${ pkgs.coreutils }/bin/echo "OBSERVED (UP TO DIFF):" >&2
+                                                                                        ${ pkgs.coreutils }/bin/head --bytes $((BYTE_POS)) $out/observed.yaml >&2
+                                                                                        ${ pkgs.coreutils }/bin/echo >&2
+                                                                                        exit 64
+                                                                                    fi
+
 
                                                                                 '' ;
                                                                     name = "visitor-check-${ name }" ;
@@ -148,7 +167,7 @@
                                                             check
                                                                 "complex-set"
                                                                 {
-                                                                    string = path : value : [ "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }" ] ;
+                                                                    string = path : value : [ "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }" ] ;
                                                                 }
                                                                 {
                                                                     set =
@@ -156,7 +175,7 @@
                                                                             builtins.concatLists
                                                                                 [
                                                                                     [
-                                                                                        "${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] path ] ) }"
+                                                                                        "${ pkgs.coreutils }/bin/mkdir ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
                                                                                     ]
                                                                                     ( builtins.concatLists ( builtins.attrValues set ) )
                                                                                 ] ;
@@ -170,7 +189,7 @@
                                                                                 } ;
                                                                         } ;
                                                                 }
-                                                                ( candidate : builtins.concatStringsSep " &&\n\t" candidate )
+                                                                ( candidate : builtins.concatStringsSep " &&\n    " candidate )
                                                                 true
                                                                 ''
                                                                     ${ pkgs.coreutils }/bin/mkdir ROOT &&
