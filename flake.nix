@@ -12,14 +12,14 @@
                         let
                             lib =
                                 {
-                                    bool ? null ,
-                                    float ? null ,
-                                    int ? null ,
-                                    lambda ? null ,
-                                    null ? null ,
-                                    path ? null ,
-                                    string ? null
-                                } @simple :
+                                    bool ? builtins.null ,
+                                    float ? builtins.null ,
+                                    int ? builtins.null ,
+                                    lambda ? builtins.null ,
+                                    null ? builtins.null ,
+                                    path ? builtins.null ,
+                                    string ? builtins.null
+                                } :
                                     {
                                         default ? path : value : builtins.throw "The definition at ${ builtins.concatStringsSep " / " ( builtins.concatLists [ [ "*ROOT*" ] ( builtins.map builtins.toJSON path ) ] ) } is invalid.  It is of type ${ builtins.typeOf value }.  It is ${ if builtins.any ( t : t == builtins.typeOf value ) [ "bool" "float" "int" "null" "path" "string" ] then  builtins.toJSON value else "unstringable." }." ,
                                         list ? path : list : list ,
@@ -91,6 +91,16 @@
                                                                         in builtins.head filtered-visitors ;
                                                                 in visitor.value ;
                                                         in visitor path value ;
+                                            simple =
+                                                {
+                                                    bool = bool ;
+                                                    float = float ;
+                                                    int = int ;
+                                                    lambda = lambda ;
+                                                    null = null ;
+                                                    path = path ;
+                                                    string = string ;
+                                                } ;
                                             in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
