@@ -20,10 +20,10 @@
                                     list ? path : list : list ,
                                     null ? builtins.null ,
                                     path ? builtins.null ,
+                                    set ? path : set : set ,
                                     string ? builtins.null
                                 } :
                                     {
-                                        set ? path : set : set
                                     } : value :
                                         let
                                             elem =
@@ -210,13 +210,6 @@
                                                             check
                                                                 "complex-set"
                                                                 {
-                                                                    string =
-                                                                        path : value :
-                                                                            [
-                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
-                                                                            ] ;
-                                                                }
-                                                                {
                                                                     set =
                                                                         path : set :
                                                                             builtins.concatLists
@@ -226,6 +219,13 @@
                                                                                     ]
                                                                                     ( builtins.concatLists ( builtins.attrValues set ) )
                                                                                 ] ;
+                                                                    string =
+                                                                        path : value :
+                                                                            [
+                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
+                                                                            ] ;
+                                                                }
+                                                                {
                                                                 }
                                                                 {
                                                                     a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10 =
