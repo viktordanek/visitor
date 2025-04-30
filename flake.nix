@@ -12,19 +12,17 @@
                         let
                             lib =
                                 {
-                                    bool ? null ,
-                                    float ? null ,
-                                    int ? null ,
-                                    lambda ? null ,
-                                    null ? null ,
-                                    path ? null ,
-                                    string ? null
-                                } @simple :
-                                    {
-                                        default ? path : value : builtins.throw "The definition at ${ builtins.concatStringsSep " / " ( builtins.concatLists [ [ "*ROOT*" ] ( builtins.map builtins.toJSON path ) ] ) } is invalid.  It is of type ${ builtins.typeOf value }.  It is ${ if builtins.any ( t : t == builtins.typeOf value ) [ "bool" "float" "int" "null" "path" "string" ] then  builtins.toJSON value else "unstringable." }." ,
-                                        list ? path : list : list ,
-                                        set ? path : set : set
-                                    } : value :
+                                    bool ? builtins.null ,
+                                    default ? path : value : builtins.throw "The definition at ${ builtins.concatStringsSep " / " ( builtins.concatLists [ [ "*ROOT*" ] ( builtins.map builtins.toJSON path ) ] ) } is invalid.  It is of type ${ builtins.typeOf value }.  It is ${ if builtins.any ( t : t == builtins.typeOf value ) [ "bool" "float" "int" "null" "path" "string" ] then  builtins.toJSON value else "unstringable." }." ,
+                                    float ? builtins.null ,
+                                    int ? builtins.null ,
+                                    lambda ? builtins.null ,
+                                    list ? path : list : list ,
+                                    null ? builtins.null ,
+                                    path ? builtins.null ,
+                                    set ? path : set : set ,
+                                    string ? builtins.null
+                                } : value :
                                         let
                                             elem =
                                                 path : value :
@@ -91,6 +89,16 @@
                                                                         in builtins.head filtered-visitors ;
                                                                 in visitor.value ;
                                                         in visitor path value ;
+                                            simple =
+                                                {
+                                                    bool = bool ;
+                                                    float = float ;
+                                                    int = int ;
+                                                    lambda = lambda ;
+                                                    null = null ;
+                                                    path = path ;
+                                                    string = string ;
+                                                } ;
                                             in elem [ ] value ;
                             pkgs = builtins.import nixpkgs { system = system ; } ;
                             in
@@ -98,7 +106,7 @@
                                     checks =
                                         let
                                             check =
-                                                name : simple : complex : visited : observation : expected-success : expected-value :
+                                                name : simple : visited : observation : expected-success : expected-value :
                                                     {
                                                         name = name ;
                                                         value =
@@ -111,7 +119,7 @@
                                                                                     success = if builtins.typeOf expected-success == "bool" then expected-success else builtins.throw "The expected success of ${ name } should be a boolean."  ;
                                                                                     value = if builtins.any ( t : t == builtins.typeOf expected-value ) [ "bool" "float" "int" "null" "string" "path" ] then expected-value else builtins.throw "The expected value of ${ name } is not stringable but ${ builtins.typeOf expected-value }." ;
                                                                                 } ;
-                                                                            observed = builtins.tryEval ( observation ( lib simple complex  visited ) ) ;
+                                                                            observed = builtins.tryEval ( observation ( lib simple visited ) ) ;
                                                                             in
                                                                                 ''
                                                                                     ${ pkgs.coreutils }/bin/mkdir $out &&
@@ -161,13 +169,6 @@
                                                             check
                                                                 "complex-list"
                                                                 {
-                                                                    string =
-                                                                        path : value :
-                                                                            [
-                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
-                                                                            ] ;
-                                                                }
-                                                                {
                                                                     list =
                                                                         path : list :
                                                                             builtins.concatLists
@@ -177,6 +178,11 @@
                                                                                     ]
                                                                                     ( builtins.concatLists list )
                                                                                 ] ;
+                                                                    string =
+                                                                        path : value :
+                                                                            [
+                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
+                                                                            ] ;
                                                                 }
                                                                 [
                                                                     [
@@ -200,13 +206,6 @@
                                                             check
                                                                 "complex-set"
                                                                 {
-                                                                    string =
-                                                                        path : value :
-                                                                            [
-                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
-                                                                            ] ;
-                                                                }
-                                                                {
                                                                     set =
                                                                         path : set :
                                                                             builtins.concatLists
@@ -216,6 +215,11 @@
                                                                                     ]
                                                                                     ( builtins.concatLists ( builtins.attrValues set ) )
                                                                                 ] ;
+                                                                    string =
+                                                                        path : value :
+                                                                            [
+                                                                                "${ pkgs.coreutils }/bin/echo ${ value } > ${ builtins.concatStringsSep "/" ( builtins.concatLists [ [ "ROOT" ] ( builtins.map builtins.toJSON path ) ] ) }"
+                                                                            ] ;
                                                                 }
                                                                 {
                                                                     a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10 =
@@ -240,10 +244,10 @@
                                                                         ${ pkgs.coreutils }/bin/echo e0c8f7913af793255957e4ae8c7e4c10b75466e4fa0949bdd837431c3ac16f16ebd2a6682afe0eed701ee3417668aaebea74a4145da31dfa5c6df8eb696b7021 > ROOT/"a91379ffc4880060c62443f8c0e41917a1a0bcdbe76eb24775437fe43318cbec47a04971716e1dbeed255688869732b1d2505cf91aeb9c870e3b6e5eb8313b10"/"f20dd5a056deb7ed89ac758d516628f84bb8bc0c13b261da5a459f9ecffd94b07de91af2e5aff0d3a4559cb7fd13dd216c72caf52b7f8f2b1b3973895073d0ca"/"string"
                                                                 ''
                                                         )
-                                                        ( check "no-visitor" { string = path : value : value ; } { } null ( candidate : candidate ) false false )
-                                                        ( check "set" { string = path : value : value ; } { } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
-                                                        ( check "string" { string = path : value : value ; } { } "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" ( candidate : candidate ) true "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" )
-                                                        ( check "list" { string = path : value : value ; } { } [ "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" ] ( candidate : builtins.elemAt candidate 0 ) true "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" )
+                                                        ( check "no-visitor" { string = path : value : value ; } null ( candidate : candidate ) false false )
+                                                        ( check "set" { string = path : value : value ; } { alpha = "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" ; } ( candidate : candidate.alpha ) true "512f3471c79f2cb9f99ec4ebe152158bb114189d2f5882541442fc5d539da43901a29b85d915253ee3d58d636a364804772410af112a6a6c99f54d2a56bfedb2" )
+                                                        ( check "string" { string = path : value : value ; } "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" ( candidate : candidate ) true "9a9115b8c7fe5ec423464e181946afaa6639b8f2792afee8f8dd76d07607c476c234918fbdd6f2a254098ec30958bae2414b0a39b72ca69cdbfcbf8c310d830f" )
+                                                        ( check "list" { string = path : value : value ; } [ "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" ] ( candidate : builtins.elemAt candidate 0 ) true "c338cd832d312cc4f76bb1a7f9febf96745a9b19a6e5d7cff378f5f4b79fcb0e98d1e4450fcb1f1a87050c45700654f34f878c0a65f9559ef289f3e10e29b700" )
                                                     ] ;
                                     lib = lib ;
                                 } ;
