@@ -13,7 +13,7 @@
                         list ? path : list : list ,
                         null ? builtins.null ,
                         path ? builtins.null ,
-                        set ? path : set : set ,
+                        set ? path : builtins.trace "1076dd6c-5027-45c0-8380-812d9a508ae3" ( set : builtins.trace "1ec15191-7dbe-4bbf-b147-6f99da55c0c1" set ) ,
                         string ? builtins.null
                     } : value :
                             let
@@ -39,7 +39,7 @@
                                                                                 if builtins.typeOf set == "lambda" then
                                                                                     {
                                                                                         name = "set" ;
-                                                                                        value = path : value : set path ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ;
+                                                                                        value = path : value : builtins.trace "122c8b16-5127-473b-8753-f1835175ec7e" ( set path ( builtins.mapAttrs ( name : value : elem ( builtins.concatLists [ path [ name ] ] ) value ) value ) ) ;
                                                                                     }
                                                                                 else builtins.throw "The complex set aggregator is not lambda but ${ builtins.typeOf set }." ;
                                                                             simple-visitors =
@@ -62,6 +62,7 @@
                                                                                                         int = int ;
                                                                                                         lambda = lambda ;
                                                                                                         null = null ;
+                                                                                                        path = path ;
                                                                                                         string = string ;
                                                                                                     } ;
                                                                                             mapper =
@@ -92,6 +93,6 @@
                                         path = path ;
                                         string = string ;
                                     } ;
-                                in elem [ ] value ;
+                                in builtins.trace "f08a6195-2004-4647-a9da-4ba0615dd2de" ( elem [ ] value ) ;
             } ;
 }
