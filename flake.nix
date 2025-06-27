@@ -99,6 +99,29 @@
                         in
                             {
                                 implementation = implementation ;
+                                test =
+                                    nixpkgs : system : expected : visitors : value :
+                                        let
+                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+                                            in
+                                                pkgs.writeShellApplication
+                                                    {
+                                                        name = "check-visitorqgit" ;
+                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
+                                                        text =
+                                                            let
+                                                                observed = builtins.tryEval ( builtins.toJSON ( implementation visitors value ) ) ;
+                                                                in
+                                                                    if observed.success == true then
+                                                                        ''
+                                                                            exit ${ if expected == observed.value then "0" else "64" }
+                                                                        ''
+                                                                    else
+                                                                        ''
+                                                                            echo We are not able to express the observed value as a JSON
+                                                                            exit 64
+                                                                        '' ;
+                                                    } ;
                             } ;
             } ;
 }
