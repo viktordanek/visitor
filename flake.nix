@@ -106,7 +106,7 @@
                                             in
                                                 pkgs.writeShellApplication
                                                     {
-                                                        name = name ;
+                                                        name = "check-visitor" ;
                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                         text =
                                                             let
