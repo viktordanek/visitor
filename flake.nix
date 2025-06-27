@@ -102,7 +102,7 @@
                                 test =
                                     nixpkgs : system : expected : visitors : value :
                                         let
-                                            pkgs = builtins.getAttr system : nixpkgs.legacyPackages ;
+                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                                             in
                                                 pkgs.writeShellApplication
                                                     {
