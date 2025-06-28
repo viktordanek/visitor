@@ -104,24 +104,16 @@
                                         let
                                             pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                                             in
-                                                pkgs.writeShellApplication
+                                                pkgs.stdenv.mkDerivation
                                                     {
-                                                        name = "check-visitorqgit" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
-                                                        text =
-                                                            let
-                                                                observed = builtins.tryEval ( builtins.toJSON ( implementation visitors value ) ) ;
-                                                                in
-                                                                    if observed.success == true then
-                                                                        ''
-                                                                            exit ${ if expected == observed.value then "0" else "64" }
-                                                                        ''
-                                                                    else
-                                                                        ''
-                                                                            echo We are not able to express the observed value as a JSON
-                                                                            exit 64
-                                                                        '' ;
-                                                    } ;
+                                                        configurePhase =
+                                                            ''
+                                                                echo WTF
+                                                                exit 64
+                                                            '' ;
+                                                        name = "test-visitor" ;
+                                                        src = ./. ;
+                                                    }
                             } ;
             } ;
 }
