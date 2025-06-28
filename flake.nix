@@ -100,27 +100,29 @@
                             {
                                 implementation = implementation ;
                                 test =
-                                    nixpkgs : system : expected : visitors : value :
+                                   pkgs : expected : success : visitors : value :
                                         let
-                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+                                            eval = builtins.tryEval ( implementation visitors value ) ;
+                                            status = { success = success ; value = expected ; } == eval ;
                                             in
-                                                pkgs.writeShellApplication
+                                                pkgs.stdenv.mkDerivation
                                                     {
-                                                        name = "check-visitorqgit" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
-                                                        text =
-                                                            let
-                                                                observed = builtins.tryEval ( builtins.toJSON ( implementation visitors value ) ) ;
-                                                                in
-                                                                    if observed.success == true then
-                                                                        ''
-                                                                            exit ${ if expected == observed.value then "0" else "64" }
-                                                                        ''
-                                                                    else
-                                                                        ''
-                                                                            echo We are not able to express the observed value as a JSON
-                                                                            exit 64
-                                                                        '' ;
+                                                        installPhase =
+                                                            if status then
+                                                                ''
+                                                                    touch $out
+                                                                    echo SUCCESS
+                                                                    exit 0
+                                                                ''
+                                                            else
+                                                                ''
+                                                                    touch $out
+                                                                    echo '${ builtins.toJSON { expected = { success = success ; value = expected ; } ; observed = eval ; } }' | yq --yaml-output "." >&2
+                                                                    exit 64
+                                                                '' ;
+                                                        name = "test-visitor" ;
+                                                        nativeBuildInputs = [ pkgs.coreutils pkgs.yq ] ;
+                                                        src = ./. ;
                                                     } ;
                             } ;
             } ;
